@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPooler : Singleton
+public class ObjectPooler : Singleton<ObjectPooler>
 {
     private Dictionary<string, Queue<GameObject>> _pool;
+    public PooleableSources[] pooleableSources;
 
+    [Serializable]
     public class PooleableSources
     {
+        public string name;
         public string resourcePath;
         public GameObject[] prefabs;
     }
@@ -41,5 +45,10 @@ public class ObjectPooler : Singleton
             _pool = new Dictionary<string, Queue<GameObject>>();
         if (!_pool.ContainsKey(key))
             _pool.Add(key, new Queue<GameObject>());
+    }
+
+    private void OnDestroy()
+    {
+        
     }
 }
