@@ -1,14 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
-public class PSDestroy : MonoBehaviour {
+public class PSDestroy : MonoBehaviour
+{
+    private void OnEnable()
+    {
+        StartCoroutine(Recicle());
+    }
 
-	// Use this for initialization
-	void Start () {
-		Destroy(gameObject, GetComponent<ParticleSystem>().duration);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+    private void Start()
+    {
+        StartCoroutine(Recicle());
+    }
+
+    IEnumerator Recicle()
+	{
+		yield return new WaitForSeconds(1f);
+		ObjectPooler.Instance.RecicleGameObject("Explosion", this.gameObject);
 	}
 }

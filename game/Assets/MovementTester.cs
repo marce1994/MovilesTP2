@@ -14,10 +14,9 @@ public class MovementTester : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
         {
-            GameObject gameObject = Instantiate(asteroidPrefab);
             Vector3 spawnPos = Random.insideUnitSphere.normalized * 50;
             spawnPos.z = 0;
-            gameObject.transform.position = spawnPos;
+            ObjectPooler.Instance.InstantiateFromPool("Asteroid", spawnPos, Quaternion.identity);
         }
 
         var multiplier = 1;

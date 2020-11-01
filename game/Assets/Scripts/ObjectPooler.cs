@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ObjectPooler : Singleton<ObjectPooler>
@@ -13,6 +14,18 @@ public class ObjectPooler : Singleton<ObjectPooler>
         public string name;
         public string resourcePath;
         public GameObject[] prefabs;
+    }
+
+    private void Awake()
+    {
+        pooleableSources = new PooleableSources[]
+        {
+            new PooleableSources(){ name = "Asteroid", resourcePath = "Level1/Asteroids"},
+            new PooleableSources(){ name = "Explosion", resourcePath = "Level1/Particles"}
+        };
+
+        foreach (var pooleableSource in pooleableSources)
+            pooleableSource.prefabs = Resources.LoadAll<GameObject>(pooleableSource.resourcePath);
     }
 
     public GameObject RecicleGameObject(string key, GameObject gameObject)
@@ -29,14 +42,17 @@ public class ObjectPooler : Singleton<ObjectPooler>
     {
         EnsureInitialized(key);
 
-        var obj = _pool[key].Dequeue();
-        
+        GameObject obj = _pool[key].Count() > 0? _pool[key].Dequeue() : null;
+
+        if (obj == null)
+            obj = Instantiate(pooleableSources.First(x => x.name == key).prefabs.First());
+
         obj.transform.position = position;
         obj.transform.rotation = rotation;
 
         obj.SetActive(true);
 
-        return _pool[key].Dequeue();
+        return obj;
     }
 
     private void EnsureInitialized(string key)
@@ -45,10 +61,5 @@ public class ObjectPooler : Singleton<ObjectPooler>
             _pool = new Dictionary<string, Queue<GameObject>>();
         if (!_pool.ContainsKey(key))
             _pool.Add(key, new Queue<GameObject>());
-    }
-
-    private void OnDestroy()
-    {
-        
     }
 }

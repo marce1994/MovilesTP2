@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1478366859942916871}
   - component: {fileID: 1478366859942916870}
-  - component: {fileID: 1478366859942916888}
   - component: {fileID: 1478366859942916889}
-  - component: {fileID: 1478366859942916891}
+  - component: {fileID: 9087421288307802819}
+  - component: {fileID: 50673160278980710}
   m_Layer: 0
   m_Name: Asteroid 5
   m_TagString: Untagged
@@ -82,20 +82,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1478366859942916888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1478366859942916890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db540a34e896f2c4d99a513419d28057, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isStatic: 0
-  rb: {fileID: 0}
 --- !u!58 &1478366859942916889
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -106,13 +92,25 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.53
---- !u!50 &1478366859942916891
+--- !u!114 &9087421288307802819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1478366859942916890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd77b39b4714a9e4abd39e0f8b7ea685, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!50 &50673160278980710
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -120,14 +118,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1478366859942916890}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 1
-  m_Mass: 0.32272616
-  m_LinearDrag: 0.5
-  m_AngularDrag: 0
-  m_GravityScale: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
