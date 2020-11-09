@@ -7,7 +7,9 @@ public class MissileController : MonoBehaviour, IPooledObject
 
     public void OnInstantiate()
     {
-        // Nothing to do
+        var trailRenderer = gameObject.GetComponent<TrailRenderer>();
+        for (int i = 0; i < trailRenderer.positionCount; i++)
+            trailRenderer.SetPosition(i, Vector3.zero);
     }
 
     public void SetPath(Vector3[] path)

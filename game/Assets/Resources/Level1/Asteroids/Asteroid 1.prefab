@@ -245,7 +245,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   ExplosionClip: {fileID: 8300000, guid: facdddd2545596f4a8ffcf7c30201117, type: 3}
+  TouchSound: {fileID: 8300000, guid: 8a3c9d93ef3c5414e9ba6fb01a0d3c52, type: 3}
+  MissileSound: {fileID: 8300000, guid: 1b1eac117dad24243bc8695a41ccbd0e, type: 3}
   AsteroidDamage: 1
+  speed: 20
 --- !u!50 &50673160278980710
 Rigidbody2D:
   serializedVersion: 4

@@ -13,6 +13,8 @@ public class AsteroidController : MonoBehaviour, ITouchable, IPooledObject
 
     public AnimationCurve touchScale;
     public AudioClip ExplosionClip;
+    public AudioClip TouchSound; // TODO: Meter en algo como un sound manager o algo asi
+    public AudioClip MissileSound; // TODO: Meter en algo como un sound manager o algo asi
 
     public long AsteroidDamage;
     public int speed = 20;
@@ -51,21 +53,7 @@ public class AsteroidController : MonoBehaviour, ITouchable, IPooledObject
         }
         else current = (current + 1) % path.Length;
 
-
-        if (touchCurrentTime > touchMaxTime)
-            return;
-
-        touchCurrentTime += Time.deltaTime;
-
-        if (touchCurrentTime > touchMaxTime)
-        {
-            touchObject.SetActive(false);
-        }
-        else
-        {
-            touchObject.transform.position = touchPositionWorldSpace;
-            touchObject.transform.localScale = Vector3.one * touchScale.Evaluate(touchCurrentTime / touchMaxTime);
-        }
+        UpdateTouchObject();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -89,6 +77,24 @@ public class AsteroidController : MonoBehaviour, ITouchable, IPooledObject
             ObjectPooler.Instance.Recicle("Asteroid", this.gameObject);
             GameManager.Instance.KillPopulation(AsteroidDamage);
             AudioSource.PlayClipAtPoint(ExplosionClip, Camera.main.transform.position, 0.5f);
+        }
+    }
+
+    private void UpdateTouchObject()
+    {
+        if (touchCurrentTime > touchMaxTime)
+            return;
+
+        touchCurrentTime += Time.deltaTime;
+
+        if (touchCurrentTime > touchMaxTime)
+        {
+            touchObject.SetActive(false);
+        }
+        else
+        {
+            touchObject.transform.position = touchPositionWorldSpace;
+            touchObject.transform.localScale = Vector3.one * touchScale.Evaluate(touchCurrentTime / touchMaxTime);
         }
     }
 
@@ -133,8 +139,10 @@ public class AsteroidController : MonoBehaviour, ITouchable, IPooledObject
     {
         if (Time.timeScale <= 0) return;
         touchObject.SetActive(false);
-        var missile = ObjectPooler.Instance.InstantiateFromPool("Missile", Vector3.zero, Quaternion.identity);
-        var missileController = missile.GetComponent<MissileController>();
+        GameObject missile = ObjectPooler.Instance.InstantiateFromPool("Missile", Vector3.zero, Quaternion.identity);
+        MissileController missileController = missile.GetComponent<MissileController>();
+        AudioSource.PlayClipAtPoint(TouchSound, Camera.main.transform.position, 0.1f);
+        AudioSource.PlayClipAtPoint(MissileSound, Camera.main.transform.position, 0.2f);
         missileController.SetPath(reversePath);
     }
 

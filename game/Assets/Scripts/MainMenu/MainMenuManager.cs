@@ -18,36 +18,30 @@ public class MainMenuManager : MonoBehaviour
 
         play.onClick.AddListener(() =>
         {
-            Debug.Log("Play");
-            RemoveListeners(buttons);
+            PluginTest.Instance.Log("Play");
+            buttons.RemoveListeners();
             SceneManager.LoadSceneAsync("GameScene");
         });
 
         logs.onClick.AddListener(() =>
         {
-            Debug.Log("Logs");
-            RemoveListeners(buttons);
+            PluginTest.Instance.Log("Logs");
+            buttons.RemoveListeners();
             SceneManager.LoadSceneAsync("LogPlugin");
         });
 
         settings.onClick.AddListener(() =>
         {
-            Debug.Log("Settings");
-            RemoveListeners(buttons);
+            PluginTest.Instance.Log("Settings");
+            buttons.RemoveListeners();
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
         });
 
         quit.onClick.AddListener(() =>
         {
-            Debug.Log("Quit");
-            RemoveListeners(buttons);
+            PluginTest.Instance.Log("Quit");
+            buttons.RemoveListeners();
             Application.Quit();
         });
-    }
-
-    private void RemoveListeners(Button[] buttons)
-    {
-        foreach (Button button in buttons)
-            button.onClick.RemoveAllListeners();
     }
 }

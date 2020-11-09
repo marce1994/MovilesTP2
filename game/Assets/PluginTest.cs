@@ -68,14 +68,15 @@ public class PluginTest : Singleton<PluginTest>
 
     private void Awake()
     {
-        if (SceneManager.GetActiveScene().name != "MainMenu")
+        if (SceneManager.GetActiveScene().name != "LogPlugin")
             return;
 
-        var buttons = gameObject.GetComponentsInChildren<Button>();
+        Button[] buttons = gameObject.GetComponentsInChildren<Button>();
 
         buttons.Single(x => x.name == "Return").onClick.AddListener(() =>
         {
-            SceneManager.LoadSceneAsync(0); // Esta va a ser la escena menu inicial...
+            buttons.RemoveListeners();
+            SceneManager.LoadSceneAsync("MainMenu");
         });
 
         buttons.Single(x => x.name == "Refresh").onClick.AddListener(() =>

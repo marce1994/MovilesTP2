@@ -7,7 +7,7 @@ public class ParallaxController : MonoBehaviour
     private Transform cameraTransform;
     private Vector3 lastCameraPosition;
 
-    Dictionary<int, List<GameObject>> parallaxLayers;
+    private Dictionary<int, List<GameObject>> parallaxLayers;
 
     void Start()
     {

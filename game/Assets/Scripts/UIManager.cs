@@ -15,9 +15,9 @@ public class UIManager : Singleton<UIManager>
 
     private Text gameOverText;
 
-    GameObject pauseMenu;
-    GameObject gameOverMenu;
-    GameObject tutorialMenu;
+    private GameObject pauseMenu;
+    private GameObject gameOverMenu;
+    private GameObject tutorialMenu;
 
     public void SetPopulation(long count, long initialPopulation)
     {
@@ -38,7 +38,7 @@ public class UIManager : Singleton<UIManager>
         hpBar.fillAmount = (float)count / (float)initialPopulation;
     }
 
-    IEnumerator PutTutorialPause()
+    private IEnumerator PutTutorialPause()
     {
         yield return new WaitForSeconds(0.2f);
         Time.timeScale = 0f;
@@ -70,6 +70,8 @@ public class UIManager : Singleton<UIManager>
         Button game_over_main_menu = buttons.Single(x => x.name == "GOMainMenu");
         Button game_over_new_game = buttons.Single(x => x.name == "NewGame");
 
+
+        //TODO: Separar metodos de funciones anonimas a parte
         tutorial_ok.onClick.AddListener(() =>
         {
             Time.timeScale = 1f;
@@ -78,22 +80,22 @@ public class UIManager : Singleton<UIManager>
 
         game_over_new_game.onClick.AddListener(() =>
         {
-            Time.timeScale = 1f;
             RemoveListeners();
+            Time.timeScale = 1f;
             SceneManager.LoadSceneAsync("GameScene");
         });
 
         game_over_main_menu.onClick.AddListener(() =>
         {
-            Time.timeScale = 1f;
             RemoveListeners();
+            Time.timeScale = 1f;
             SceneManager.LoadSceneAsync("MainMenu");
         });
 
         mainMenu.onClick.AddListener(() =>
         {
-            Time.timeScale = 1f;
             RemoveListeners();
+            Time.timeScale = 1f;
             SceneManager.LoadSceneAsync("MainMenu");
         });
 
@@ -129,7 +131,7 @@ public class UIManager : Singleton<UIManager>
         StartCoroutine(PutTutorialPause()); // TODO: Cambiar por algo no feo
     }
 
-    void RemoveListeners()
+    private void RemoveListeners()
     {
         foreach (Button button in buttons)
             button.onClick.RemoveAllListeners();
@@ -158,11 +160,7 @@ public class UIManager : Singleton<UIManager>
 
     private new void OnDestroy()
     {
-        foreach (Button button in buttons)
-        {
-            button.onClick.RemoveAllListeners();
-        }
-
+        buttons.RemoveListeners();
         base.OnDestroy();
     }
 }

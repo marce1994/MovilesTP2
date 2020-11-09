@@ -6,7 +6,7 @@ using UnityEngine;
 public class ObjectPooler : Singleton<ObjectPooler>
 {
     private Dictionary<string, List<GameObject>> _pool;
-    public PooleableSources[] pooleableSources;
+    private PooleableSources[] pooleableSources;
 
     [Serializable]
     public class PooleableSources
