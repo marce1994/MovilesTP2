@@ -1,25 +1,17 @@
 ﻿using UnityEngine;
 
-public class MissileController : MonoBehaviour
+public class MissileController : MonoBehaviour, IPooledObject
 {
     Vector3[] path;
     int current = 0;
-    TrailRenderer trailRenderer;
 
-    private void Start()
+    public void OnInstantiate()
     {
-        trailRenderer = GetComponent<TrailRenderer>();
-    }
-
-    void ResetTrail()
-    {
-        //for (int i = 0; i < trailRenderer.positionCount; i++)
-        //    trailRenderer.SetPosition(i, Vector3.zero);
+        // Nothing to do
     }
 
     public void SetPath(Vector3[] path)
     {
-        ResetTrail();
         this.path = path;
         current = 0;
     }
@@ -27,7 +19,7 @@ public class MissileController : MonoBehaviour
     public void Destroy()
     {
         path = null;
-        ObjectPooler.Instance.RecicleGameObject("Missile", this.gameObject);
+        ObjectPooler.Instance.Recicle("Missile", this.gameObject);
     }
 
     private void Update()

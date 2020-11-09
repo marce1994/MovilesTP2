@@ -2,69 +2,54 @@
 using System.Linq;
 using UnityEngine;
 
-public class AsteroidController : MonoBehaviour, ITouchable
+public class AsteroidController : MonoBehaviour, ITouchable, IPooledObject
 {
     private int current;
     private float touchMaxTime;
-    
-    private Vector3[] _pathVectors;
     private Vector3 touchPosition;
     private Vector3 touchPositionWorldSpace;
-    
+
     private GameObject touchObject;
-    
+
     public AnimationCurve touchScale;
     public AudioClip ExplosionClip;
-    
-    public long AsteroidDamage;
 
-    public Vector3[] path
-    {
-        get { return _pathVectors; }
-    }
+    public long AsteroidDamage;
+    public int speed = 20;
+
+    public Vector3[] path { get; private set; }
 
     public Vector3[] reversePath
     {
-        get { return _pathVectors.Reverse().ToArray(); }
+        get { return path.Reverse().ToArray(); }
     }
 
     private void Awake()
     {
         touchObject = GetComponentsInChildren<SpriteRenderer>().Single(x => x.name == "Touch").gameObject;
-        touchCurrentTime = 0f;
-        Initialize();
-    }
-
-    public void Initialize()
-    {
-        touchObject.transform.position = Vector3.one * 1000;
-        _pathVectors = new Vector3[] { };
-        touchMaxTime = Random.Range(3f, 5f);
-        touchObject.SetActive(true);
-        touchCurrentTime = 0f;
-        CalculatePath();
     }
 
     private void OnDrawGizmos()
     {
-        if (_pathVectors == null) return;
-        for (int i = 0; i < _pathVectors.Length; i++)
-            Gizmos.DrawLine(_pathVectors[i], _pathVectors[Mathf.Min(i + 1, _pathVectors.Length - 1)]);
+        if (path == null) return;
+        for (int i = 0; i < path.Length; i++)
+            Gizmos.DrawLine(path[i], path[Mathf.Min(i + 1, path.Length - 1)]);
         Gizmos.DrawSphere(touchPosition, 1);
     }
 
     float touchCurrentTime = 0;
+
     private void Update()
     {
-        if (transform.position != _pathVectors[current])
+        if (transform.position != path[current])
         {
             if (current == 0)
-                transform.position = _pathVectors[current];
+                transform.position = path[current];
 
-            Vector3 pos = Vector3.MoveTowards(transform.position, _pathVectors[current], 20 * Time.deltaTime);
+            Vector3 pos = Vector3.MoveTowards(transform.position, path[current], 20 * Time.deltaTime);
             transform.position = pos;
         }
-        else current = (current + 1) % _pathVectors.Length;
+        else current = (current + 1) % path.Length;
 
 
         if (touchCurrentTime > touchMaxTime)
@@ -87,52 +72,23 @@ public class AsteroidController : MonoBehaviour, ITouchable
     {
         if (collision.name.Contains("Missile"))
         {
-            _pathVectors = null;
+            path = null;
             var missileController = collision.gameObject.GetComponent<MissileController>();
             missileController.Destroy();
             ObjectPooler.Instance.InstantiateFromPool("Explosion", transform.position, Quaternion.identity);
-            ObjectPooler.Instance.RecicleGameObject("Asteroid", this.gameObject);
+            ObjectPooler.Instance.Recicle("Asteroid", this.gameObject);
+            GameManager.Instance.AddScore((long)(AsteroidDamage * touchScale.Evaluate(touchCurrentTime / touchMaxTime)));
             AudioSource.PlayClipAtPoint(ExplosionClip, Camera.main.transform.position, 0.5f);
-            switch (gameObject.name)
-            {
-                case "Asteroid 4":
-                    GameManager.Instance.AddScore((long)(AsteroidDamage * touchScale.Evaluate(touchCurrentTime / touchMaxTime)));
-                    break;
-                case "Asteroid 3":
-                    GameManager.Instance.AddScore((long)(AsteroidDamage * touchScale.Evaluate(touchCurrentTime / touchMaxTime)));
-                    break;
-                case "Asteroid 5":
-                    GameManager.Instance.AddScore((long)(AsteroidDamage * touchScale.Evaluate(touchCurrentTime / touchMaxTime)));
-                    break;
-                default:
-                    GameManager.Instance.AddScore((long)(AsteroidDamage * touchScale.Evaluate(touchCurrentTime / touchMaxTime)));
-                    break;
-            }
         }
         if (collision.name == "Earth")
         {
-            _pathVectors = null;
+            path = null;
             Handheld.Vibrate();
             Camera.main.GetComponent<StressReceiver>().InduceStress(1);
             ObjectPooler.Instance.InstantiateFromPool("Explosion", transform.position, Quaternion.identity);
-            ObjectPooler.Instance.RecicleGameObject("Asteroid", this.gameObject);
+            ObjectPooler.Instance.Recicle("Asteroid", this.gameObject);
+            GameManager.Instance.KillPopulation(AsteroidDamage);
             AudioSource.PlayClipAtPoint(ExplosionClip, Camera.main.transform.position, 0.5f);
-            
-            switch (gameObject.name)
-            {
-                case "Asteroid 4":
-                    GameManager.Instance.KillPopulation(AsteroidDamage);
-                    break;
-                case "Asteroid 3":
-                    GameManager.Instance.KillPopulation(AsteroidDamage);
-                    break;
-                case "Asteroid 5":
-                    GameManager.Instance.KillPopulation(AsteroidDamage);
-                    break;
-                default:
-                    GameManager.Instance.KillPopulation(AsteroidDamage);
-                    break;
-            }
         }
     }
 
@@ -154,14 +110,14 @@ public class AsteroidController : MonoBehaviour, ITouchable
             pathVectors.Add(new Vector3() { x = x, y = y, z = 0 });
         }
 
-        _pathVectors = pathVectors.ToArray();
+        path = pathVectors.ToArray();
         for (int i = 0; i < pathVectors.Count; i++)
         {
-            var cameraPoint = Camera.main.WorldToScreenPoint(_pathVectors[i]);
+            var cameraPoint = Camera.main.WorldToScreenPoint(path[i]);
             var inside = Camera.main.rect.Contains(cameraPoint);
             if (inside)
             {
-                touchPosition = _pathVectors[i];
+                touchPosition = path[i];
                 break;
             }
         }
@@ -180,5 +136,15 @@ public class AsteroidController : MonoBehaviour, ITouchable
         var missile = ObjectPooler.Instance.InstantiateFromPool("Missile", Vector3.zero, Quaternion.identity);
         var missileController = missile.GetComponent<MissileController>();
         missileController.SetPath(reversePath);
+    }
+
+    public void OnInstantiate()
+    {
+        touchObject.transform.position = Vector3.one * 1000;
+        path = new Vector3[] { };
+        touchMaxTime = Random.Range(3f, 5f);
+        touchObject.SetActive(true);
+        touchCurrentTime = 0f;
+        CalculatePath();
     }
 }

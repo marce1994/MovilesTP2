@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PluginTest : MonoBehaviour
+public class PluginTest : Singleton<PluginTest>
 {
     public GameObject logPrefab;
 
@@ -22,13 +22,13 @@ public class PluginTest : MonoBehaviour
 
         public void onButtonTapped(int index)
         {
-            //Debug.Log($"Button tapped: { index }");
             alertHandler?.Invoke(index);
         }
     }
 
     static AndroidJavaClass _pluginClass;
     static AndroidJavaObject _pluginInstance;
+    static AndroidJavaObject _contextInstance;
 
     public static AndroidJavaClass PluginClass
     {
@@ -55,10 +55,22 @@ public class PluginTest : MonoBehaviour
         }
     }
 
+    public static AndroidJavaObject ContextInstance {
+        get
+        {
+            if (_contextInstance == null)
+                _contextInstance = PluginClass.GetStatic<AndroidJavaObject>("mainActivity");
+            return _contextInstance;
+        }
+    }
+
     private RectTransform contentRectTransform;
 
     private void Awake()
     {
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+            return;
+
         var buttons = gameObject.GetComponentsInChildren<Button>();
 
         buttons.Single(x => x.name == "Return").onClick.AddListener(() =>
@@ -73,7 +85,7 @@ public class PluginTest : MonoBehaviour
 
         buttons.Single(x => x.name == "Clean").onClick.AddListener(() =>
         {
-            showAlertDialog(new string[] { "Alert dialog", "Do you want to clean all logs?", "close", "no", "yes" }, x =>
+            ShowAlertDialog(new string[] { "Alert dialog", "Do you want to clean all logs?", "close", "no", "yes" }, x =>
             {
                 if (x == -1)
                     CleanLogs();
@@ -84,6 +96,7 @@ public class PluginTest : MonoBehaviour
     }
 
     private float timer = 0;
+
     private void Update()
     {
         timer += Time.deltaTime;
@@ -99,16 +112,18 @@ public class PluginTest : MonoBehaviour
     {
         if (Application.platform == RuntimePlatform.Android)
             return PluginInstance.Call<double>("getElapsedTime");
-        Debug.LogWarning($"Wrong platform");
+        else
+            Debug.LogWarning($"Wrong platform");
+
         return 0;
     }
 
-    private void Log(string log)
+    public void Log(string log)
     {
         if (Application.platform == RuntimePlatform.Android)
-            PluginInstance.Call("writeLog", log);
+            PluginInstance.Call("writeLog", log, ContextInstance);
         else
-            Debug.LogWarning($"Wrong platform");
+            Debug.Log(log);
     }
 
     Dictionary<int, Text> logGos = new Dictionary<int, Text>();
@@ -123,7 +138,7 @@ public class PluginTest : MonoBehaviour
         logGos = new Dictionary<int, Text>();
 
         if (Application.platform == RuntimePlatform.Android)
-            PluginInstance.Call("deleteLogs");
+            PluginInstance.Call("deleteLogs", ContextInstance);
         else
             Debug.LogWarning("Wrong platform");
 
@@ -135,7 +150,7 @@ public class PluginTest : MonoBehaviour
         string[] logs = new string[] { };
 
         if (Application.platform == RuntimePlatform.Android)
-            logs = PluginInstance.Call<string[]>("getAllLogs");
+            logs = PluginInstance.Call<string[]>("getAllLogs", ContextInstance);
         else
             Debug.LogWarning("Wrong platform");
 
@@ -156,7 +171,7 @@ public class PluginTest : MonoBehaviour
         }
     }
 
-    void showAlertDialog(string[] strings, Action<int> handler = null)
+    void ShowAlertDialog(string[] strings, Action<int> handler = null)
     {
         if (strings.Length < 3)
         {

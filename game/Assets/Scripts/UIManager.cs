@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,13 +21,26 @@ public class UIManager : Singleton<UIManager>
 
     public void SetPopulation(long count, long initialPopulation)
     {
-        hpBarText.text = $"Pupulation: {count}";
+        string result;
+        if (count / 1000000000 > 1)
+            result = count.ToString("#,##0,#,,B");
+        else if (count / 1000000 > 1)
+            result = count.ToString("#,##0,#,M");
+        else if (count / 1000 > 1)
+            result = count.ToString("#,##0,#K");
+        else
+            result = count.ToString("#,##0");
+
+        string population = $"Pupulation: {result}";
+        PluginTest.Instance.Log(population);
+
+        hpBarText.text = $"Pupulation: {result}";
         hpBar.fillAmount = (float)count / (float)initialPopulation;
     }
 
     IEnumerator PutTutorialPause()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.2f);
         Time.timeScale = 0f;
     }
 

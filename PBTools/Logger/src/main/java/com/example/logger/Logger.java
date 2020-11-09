@@ -18,6 +18,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Logger
@@ -25,7 +27,7 @@ public class Logger
     private static final Logger instance = new Logger();
     private static final String LOGTAG = "AndroidLogger";
     private static String LOGPATH = "log.f";
-
+    
     public  static Logger getInstance() { return instance; }
 
     public static Activity mainActivity;
@@ -40,7 +42,7 @@ public class Logger
     private Logger()
     {
         Log.i(LOGTAG, "Unity Android Logger");
-        LOGPATH = "./log.f";
+        LOGPATH = "/log.f";
         Log.i(LOGTAG, LOGPATH);
         startTime = System.currentTimeMillis();
     }
@@ -50,11 +52,11 @@ public class Logger
         return (System.currentTimeMillis() - startTime) / 1000.0f;
     }
 
-    public void writeLog(String string)
+    public void writeLog(String string, Context context)
     {
         try
         {
-            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(LOGPATH,true)));
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(context.getFilesDir() + LOGPATH,true)));
             out.println(string);
             out.close();
         }
@@ -64,11 +66,11 @@ public class Logger
         }
     }
 
-    public String[] getAllLogs()
+    public String[] getAllLogs(Context context)
     {
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(LOGPATH));
+            BufferedReader reader = new BufferedReader(new FileReader(context.getFilesDir() + LOGPATH));
             List<String> lines = new ArrayList<String>();
 
             String s;
@@ -78,6 +80,10 @@ public class Logger
                 System.out.println(s);
             }
             reader.close();
+            Collections.reverse(lines);
+            String[] array = lines.toArray(new String[0]);
+
+            return array;
         }
         catch(Exception e)
         {
@@ -87,11 +93,11 @@ public class Logger
         return new String[]{};
     }
 
-    public void deleteLogs()
+    public void deleteLogs(Context context)
     {
         try
         {
-            new FileWriter(LOGPATH, false).close();
+            new FileWriter(context.getFilesDir() + LOGPATH, false).close();
         }
         catch(Exception e)
         {

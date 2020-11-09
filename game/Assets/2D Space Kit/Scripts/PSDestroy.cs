@@ -16,6 +16,6 @@ public class PSDestroy : MonoBehaviour
     IEnumerator Recicle()
 	{
 		yield return new WaitForSeconds(1f);
-		ObjectPooler.Instance.RecicleGameObject("Explosion", this.gameObject);
+		ObjectPooler.Instance.Recicle("Explosion", this.gameObject);
 	}
 }

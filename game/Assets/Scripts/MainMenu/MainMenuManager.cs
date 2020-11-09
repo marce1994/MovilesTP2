@@ -9,7 +9,7 @@ public class MainMenuManager : MonoBehaviour
     {
         Time.timeScale = 1f; // TODO: Fixear el bug de que se bugea y se congela todo
 
-        Button[] buttons = GetComponentsInChildren<Button>();
+        Button[] buttons = GetComponentsInChildren<Button>(includeInactive: true);
 
         Button play = buttons.Single(x => x.name == "Play");
         Button logs = buttons.Single(x => x.name == "Logs");
@@ -22,18 +22,21 @@ public class MainMenuManager : MonoBehaviour
             RemoveListeners(buttons);
             SceneManager.LoadSceneAsync("GameScene");
         });
+
         logs.onClick.AddListener(() =>
         {
             Debug.Log("Logs");
             RemoveListeners(buttons);
             SceneManager.LoadSceneAsync("LogPlugin");
         });
+
         settings.onClick.AddListener(() =>
         {
             Debug.Log("Settings");
             RemoveListeners(buttons);
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
         });
+
         quit.onClick.AddListener(() =>
         {
             Debug.Log("Quit");

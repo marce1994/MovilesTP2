@@ -29,7 +29,7 @@ public class ObjectPooler : Singleton<ObjectPooler>
             pooleableSource.prefabs = Resources.LoadAll<GameObject>(pooleableSource.resourcePath);
     }
 
-    public GameObject RecicleGameObject(string key, GameObject gameObject)
+    public GameObject Recicle(string key, GameObject gameObject)
     {
         EnsureInitialized(key);
 
@@ -51,6 +51,11 @@ public class ObjectPooler : Singleton<ObjectPooler>
             obj = Instantiate(objects.prefabs.ElementAt(UnityEngine.Random.Range(0, objects.prefabs.Length)));
             obj.SetActive(false);
         }
+
+        IPooledObject pooledObject = obj.GetComponent<IPooledObject>();
+
+        if (pooledObject != null)
+            pooledObject.OnInstantiate();
 
         obj.transform.position = position;
         obj.transform.rotation = rotation;

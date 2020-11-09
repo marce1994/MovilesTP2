@@ -870,7 +870,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 208.1, y: 28.97}
+  m_AnchoredPosition: {x: 208.1, y: 28.96997}
   m_SizeDelta: {x: 357.2191, y: 29.011292}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &360888614
@@ -1120,6 +1120,8 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3fbda52839d31fa49abe96047b595ea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Name: 
   m_EditorClassIdentifier: 
   asteroidPrefab: {fileID: 1478366859942916890, guid: d242d4cac19008641bebe32b2a8a4995,
@@ -2405,10 +2407,10 @@ RectTransform:
   m_Father: {fileID: 2145488020}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -112.70001}
-  m_SizeDelta: {x: -52.54669, y: -256.25705}
+  m_AnchorMin: {x: 0.065000005, y: 0.045}
+  m_AnchorMax: {x: 0.93700004, y: 0.28100002}
+  m_AnchoredPosition: {x: -0.5, y: -0.20007324}
+  m_SizeDelta: {x: -1.5466919, y: -1.2570496}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1017303545
 MonoBehaviour:
@@ -3673,10 +3675,10 @@ RectTransform:
   m_Father: {fileID: 1017303544}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.000015258789}
-  m_SizeDelta: {x: 343.64243, y: 76.616394}
+  m_SizeDelta: {x: -0.35757446, y: 0.61639404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1778727859
 MonoBehaviour:
