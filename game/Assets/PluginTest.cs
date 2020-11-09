@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -61,18 +60,26 @@ public class PluginTest : MonoBehaviour
     private void Awake()
     {
         var buttons = gameObject.GetComponentsInChildren<Button>();
+
         buttons.Single(x => x.name == "Return").onClick.AddListener(() =>
         {
-            SceneManager.LoadScene(0); // Esta va a ser la escena menu inicial...
+            SceneManager.LoadSceneAsync(0); // Esta va a ser la escena menu inicial...
         });
+
         buttons.Single(x => x.name == "Refresh").onClick.AddListener(() =>
         {
             ShowAllLogs();
         });
+
         buttons.Single(x => x.name == "Clean").onClick.AddListener(() =>
         {
-            CleanLogs();
+            showAlertDialog(new string[] { "Alert dialog", "Do you want to clean all logs?", "close", "no", "yes" }, x =>
+            {
+                if (x == -1)
+                    CleanLogs();
+            });
         });
+
         contentRectTransform = GetComponentsInChildren<RectTransform>().Single(x => x.name == "Content");
     }
 
@@ -92,7 +99,7 @@ public class PluginTest : MonoBehaviour
     {
         if (Application.platform == RuntimePlatform.Android)
             return PluginInstance.Call<double>("getElapsedTime");
-        Debug.LogWarning("Wrong platform");
+        Debug.LogWarning($"Wrong platform");
         return 0;
     }
 
@@ -101,7 +108,7 @@ public class PluginTest : MonoBehaviour
         if (Application.platform == RuntimePlatform.Android)
             PluginInstance.Call("writeLog", log);
         else
-            Debug.LogWarning("Wrong platform");
+            Debug.LogWarning($"Wrong platform");
     }
 
     Dictionary<int, Text> logGos = new Dictionary<int, Text>();

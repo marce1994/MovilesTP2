@@ -5,10 +5,9 @@ public class LevelManager : Singleton<LevelManager>
 {
     private int level = 1;
     private int difficultyMultiplier = 1;
+    private long population = 7824082000;
 
-    private int population;
-
-    public int Population { get { return population; } }
+    public long Population { get { return population; } }
 
     public int Level { get { return level; } }
 
@@ -16,23 +15,29 @@ public class LevelManager : Singleton<LevelManager>
 
     internal void BeginLevel()
     {
-        StartCoroutine(InstantiateAsteroid());    
+        StartCoroutine(InstantiateAsteroid());
     }
     
     private IEnumerator InstantiateAsteroid()
     {
         for (;;)
         {
+            if (Time.timeScale <= 0) continue;
+
             Debug.Log($"level {level}, difficulty {difficultyMultiplier}");
-            yield return new WaitForSeconds(3 / level);
+            yield return new WaitForSeconds(3f / level);
             Vector3 spawnPoint = Random.insideUnitCircle.normalized * 25;
-            ObjectPooler.Instance.InstantiateFromPool($"Asteroid", spawnPoint, Quaternion.identity);
+            GameObject asteroid = ObjectPooler.Instance.InstantiateFromPool($"Asteroid", spawnPoint, Quaternion.identity);
+            AsteroidController controller = asteroid.GetComponent<AsteroidController>();
+            controller.Initialize();
+            level = 1 + (int)(Time.timeSinceLevelLoad / 20);
+            //level = 1 + (int)(Time.timeSinceLevelLoad / 20);
         }
     }
 
     private new void OnDestroy()
     {
-        base.OnDestroy();
         StopAllCoroutines();
+        base.OnDestroy();
     }
 }
