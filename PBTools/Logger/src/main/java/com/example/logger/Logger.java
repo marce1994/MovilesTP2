@@ -25,7 +25,6 @@ public class Logger
     private static final Logger instance = new Logger();
     private static final String LOGTAG = "AndroidLogger";
     private static String LOGPATH = "log.f";
-    private static List<String> LogFakeFile;
 
     public  static Logger getInstance() { return instance; }
 
@@ -40,9 +39,8 @@ public class Logger
 
     private Logger()
     {
-        LogFakeFile = new ArrayList<String>();
         Log.i(LOGTAG, "Unity Android Logger");
-        LOGPATH = Environment.getDataDirectory() + "/log.f";
+        LOGPATH = "./log.f";
         Log.i(LOGTAG, LOGPATH);
         startTime = System.currentTimeMillis();
     }
@@ -56,16 +54,9 @@ public class Logger
     {
         try
         {
-
-            Log.i(LOGTAG, "Logueando: " + string);
-
-            // Como no anda el archivo, uso esto (temporal)
-            LogFakeFile.add(string);
-
-            //PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(LOGPATH,true)));
-
-            //out.println(string);
-            //out.close();
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(LOGPATH,true)));
+            out.println(string);
+            out.close();
         }
         catch (Exception e)
         {
@@ -77,18 +68,16 @@ public class Logger
     {
         try
         {
-            return LogFakeFile.toArray(new String[]{});
-            //BufferedReader reader = new BufferedReader(new FileReader(LOGPATH));
-            //List<String> lines = new ArrayList<String>();
+            BufferedReader reader = new BufferedReader(new FileReader(LOGPATH));
+            List<String> lines = new ArrayList<String>();
 
-            //String s;
-            //while((s=reader.readLine())!=null) {
-            //    lines.add(s);
-            //    System.out.println(s);
-            //}
-            //reader.close();
-
-            // Como no anda el archivo, uso esto (temporal)
+            String s;
+            while((s=reader.readLine())!=null)
+            {
+                lines.add(s);
+                System.out.println(s);
+            }
+            reader.close();
         }
         catch(Exception e)
         {
@@ -102,8 +91,7 @@ public class Logger
     {
         try
         {
-            LogFakeFile.clear();
-            //new FileWriter(LOGPATH, false).close();
+            new FileWriter(LOGPATH, false).close();
         }
         catch(Exception e)
         {

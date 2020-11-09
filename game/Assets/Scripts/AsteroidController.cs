@@ -85,7 +85,6 @@ public class AsteroidController : MonoBehaviour, ITouchable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        print($"collision {collision.name}");
         if (collision.name.Contains("Missile"))
         {
             _pathVectors = null;

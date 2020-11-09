@@ -22,7 +22,7 @@ public class PluginTest : MonoBehaviour
 
         public void onButtonTapped(int index)
         {
-            Debug.Log($"Button tapped: { index }");
+            //Debug.Log($"Button tapped: { index }");
             alertHandler?.Invoke(index);
         }
     }

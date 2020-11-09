@@ -4,10 +4,12 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     private int level = 1;
-    private int difficultyMultiplier = 1;
     private long population = 7824082000;
-    private long originalPopulation = 7824082000;
     private long score = 0;
+
+    private const long originalPopulation = 7824082000;
+    private const int difficultyMultiplier = 30000000;
+    private const int spawnDistance = 25;
 
     public long Population { get { return population; } }
 
@@ -35,8 +37,9 @@ public class GameManager : Singleton<GameManager>
 
     public void KillPopulation(long quantity)
     {
-        population = (long)Mathf.Max(0, population - quantity * 30000000);
+        population = (long)Mathf.Max(0, population - quantity * difficultyMultiplier);
         UIManager.Instance.SetPopulation(population, originalPopulation);
+
         if (population == 0)
         {
             Time.timeScale = 0f;
@@ -51,11 +54,16 @@ public class GameManager : Singleton<GameManager>
             if (Time.timeScale <= 0) continue;
 
             Debug.Log($"level {level}, difficulty {difficultyMultiplier}");
+
             yield return new WaitForSeconds(3f / level);
-            Vector3 spawnPoint = Random.insideUnitCircle.normalized * 25;
+
+            Vector3 spawnPoint = Random.insideUnitCircle.normalized * spawnDistance;
+
             GameObject asteroid = ObjectPooler.Instance.InstantiateFromPool($"Asteroid", spawnPoint, Quaternion.identity);
+
             AsteroidController controller = asteroid.GetComponent<AsteroidController>();
             controller.Initialize();
+
             level = 1 + (int)(Time.timeSinceLevelLoad / 20);
         }
     }
